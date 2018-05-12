@@ -27,8 +27,16 @@ public class Daisy {
         return albedo;
     }
 
+    public String getColour() {
+        return colour;
+    }
+
     public int getAge() {
         return this.age;
+    }
+
+    public int getMaxAge() {
+        return maxAge;
     }
 
     public void tick(){ this.age ++; }
