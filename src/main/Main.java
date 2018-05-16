@@ -13,8 +13,9 @@ public class Main {
         int startPercentageOfBlacks = 20;
         double albedoOfWhites = 0.75;
         double albedoOfBlacks = 0.25;
-        double albedoOfSurface = 0.40;
-        String scenario = Params.SCENARIO_WEATHER_EXPERIMENT;
+        double albedoOfSurface = 0.4;
+
+        String scenario = Params.SCENARIO_RAMP_UP_RAMP_DOWN;
 
         try {
             // Daisy World setup

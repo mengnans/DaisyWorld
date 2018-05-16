@@ -28,7 +28,7 @@ public class Params {
 
     // weather experiment scenario
     // each weather last for 100 ticks
-    // 60% sunny: nothing happen
+    // 60% sunny: nothing happens
     // 20% cloudy: luminosity drops 10%
     // 15% rainy: luminosity drops 15%
     // 5% lightning: luminosity drops 15%

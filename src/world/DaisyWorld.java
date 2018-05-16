@@ -3,10 +3,10 @@ package world;
 import entity.Daisy;
 import entity.Location;
 import entity.Patch;
-import entity.Ticker;
+import utility.Ticker;
 import exception.InvalidParameterException;
 import params.Params;
-import untility.CSVWriter;
+import utility.CSVWriter;
 
 import java.io.FileWriter;
 import java.io.IOException;

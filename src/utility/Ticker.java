@@ -1,4 +1,4 @@
-package entity;
+package utility;
 
 /**
  * @author Mengnan Shi
