@@ -4,9 +4,13 @@ import entity.Daisy;
 import entity.Location;
 import entity.Patch;
 import entity.Ticker;
-import javafx.scene.chart.XYChart;
 import params.Params;
+import untility.CSVUtils;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -35,21 +39,36 @@ public class DaisyWorld {
     public static int whitesPopulation;
     public static int blacksPopulation;
 
-    public static XYChart.Series whitesPopulationSeries;
-    public static XYChart.Series blacksPopulationSeries;
-    public static XYChart.Series luminositySeries;
-    public static XYChart.Series globalTermperatureSeries;
+    private final static String FILE_NAME = "./data.csv";
+    private static FileWriter fileWriter;
 
     private static void printInfo() {
-        System.out.println("" + ticker.getTick() + "[" + whitesPopulation + ", " + blacksPopulation + ", " + globalTemperature + ", " + solarLuminosity + "]");
+//        System.out.println("" + ticker.getTick() + "[" + whitesPopulation + ", " + blacksPopulation + ", " + globalTemperature + ", " + solarLuminosity + "]");
+        List<String> data = new ArrayList<>();
+        data.add("" + ticker.getTick());
+        data.add("" + whitesPopulation);
+        data.add("" + blacksPopulation);
+        data.add("" + globalTemperature);
+        data.add("" + solarLuminosity);
 
-        whitesPopulationSeries.getData().add(new XYChart.Data(ticker.getTick(), whitesPopulation));
-        blacksPopulationSeries.getData().add(new XYChart.Data(ticker.getTick(), blacksPopulation));
-        globalTermperatureSeries.getData().add(new XYChart.Data(ticker.getTick(), globalTemperature));
+        try {
+            CSVUtils.writeLine(fileWriter,data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void setup(String scenario, int startPercentageOfWhites, int startPercentageOfBlacks,
                              double albedoOfWhites, double albedoOfBlacks, double albedoOfSurface) {
+
+        // init the csv writer
+        try {
+            fileWriter = new FileWriter(FILE_NAME);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         DaisyWorld.scenario = scenario;
         DaisyWorld.startPercentageOfBlacks = startPercentageOfBlacks;
         DaisyWorld.startPercentageOfWhites = startPercentageOfWhites;
@@ -63,14 +82,7 @@ public class DaisyWorld {
         whitesPopulation = 0;
         blacksPopulation = 0;
 
-        whitesPopulationSeries = new XYChart.Series();
-        whitesPopulationSeries.setName("Whites Population");
-        globalTermperatureSeries = new XYChart.Series();
-        globalTermperatureSeries.setName("Global Temperature");
-        blacksPopulationSeries = new XYChart.Series();
-        blacksPopulationSeries.setName("Blacks Population");
-
-
+        // set init luminosity based on different scenarios
         if (scenario.equals(Params.SCENARIO_OUR_SOLAR_LUMINOSITY)) {
             solarLuminosity = 1.0;
         }
@@ -174,6 +186,17 @@ public class DaisyWorld {
                 }
             }
         }
+    }
+
+    // close the writer
+    public static void end() {
+        try {
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

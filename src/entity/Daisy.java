@@ -16,6 +16,10 @@ public class Daisy {
     private int age;
     private int maxAge;
 
+    private Daisy(){
+
+    }
+
     private Daisy(double albedo, String colour, int maxAge) {
         this.albedo = albedo;
         this.age = 0;

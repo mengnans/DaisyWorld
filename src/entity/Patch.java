@@ -19,6 +19,7 @@ public class Patch {
 
     // TODO changne back
     public double temperature;
+    public double temperatureLeft;
     public double diffusionLeft;
     public double diffusionReceived;
 
@@ -27,6 +28,7 @@ public class Patch {
         this.location = location;
         daisyOnThisPatch = NO_DAISY_ON_THIS_PATCH;
         temperature = Params.INITIAL_PATCH_TEMPERATURE;
+        temperatureLeft = 0;
         diffusionLeft = 0;
         diffusionReceived = 0;
     }
@@ -37,7 +39,7 @@ public class Patch {
     }
 
     public double getTemperature() {
-        return temperature + diffusionReceived + diffusionLeft;
+        return temperature;
     }
 
     public Location getLocation() {
@@ -69,10 +71,13 @@ public class Patch {
             localHeating = 80;
         }
 
-        this.temperature = ((this.temperature + localHeating) / 2);
-        this.diffusionLeft = this.temperature * diffusion;
-        this.temperature -= this.diffusionLeft;
-        this.diffusionReceived = 0;
+        // calc new temp
+        temperature = ((temperature + localHeating) / 2);
+
+        // used for diffusion
+        diffusionLeft = temperature * diffusion;
+        temperatureLeft = temperature - diffusionLeft;
+        diffusionReceived = 0;
     }
 
 
@@ -82,20 +87,23 @@ public class Patch {
                         .getLocation()
                         .allNeighbourLocations();
 
+        // calc diffusion for each patch
         double diffusionToEachPatch = diffusionLeft / 8;
 
         for (Location neighbourLocation : neighbourLocations
                 ) {
             int x = neighbourLocation.getX();
             int y = neighbourLocation.getY();
+            // calc diffusion received for patch[x][y]
             patches[x][y].diffusionReceived += diffusionToEachPatch;
+            // calc diffusion left for this patch
             diffusionLeft -= diffusionToEachPatch;
 
         }
     }
 
     public void resetTemperature() {
-        temperature = getTemperature();
+        temperature = temperatureLeft + diffusionLeft +diffusionReceived;
     }
 
     public void checkSurvivability(Patch[][] patches) {
