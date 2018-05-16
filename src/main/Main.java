@@ -6,7 +6,7 @@ import world.DaisyWorld;
 
 public class Main {
 
-
+    // main method
     public static void main(String[] args) {
         int maxTick = 3000;
         int startPercentageOfWhites = 20;

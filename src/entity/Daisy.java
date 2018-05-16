@@ -27,23 +27,23 @@ public class Daisy {
         this.colour = colour;
     }
 
-    public double getAlbedo() {
+    double getAlbedo() {
         return albedo;
     }
 
-    public String getColour() {
+    String getColour() {
         return colour;
     }
 
-    public int getAge() {
+    int getAge() {
         return this.age;
     }
 
-    public int getMaxAge() {
+    int getMaxAge() {
         return maxAge;
     }
 
-    public void tick(){ this.age ++; }
+    void tick(){ this.age ++; }
 
     public static Daisy getBlackDaisy(int maxAge) {
         return new Daisy(

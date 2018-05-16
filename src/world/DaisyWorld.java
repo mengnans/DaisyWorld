@@ -70,6 +70,9 @@ public class DaisyWorld {
 
     }
 
+    // same as Netlogo setup,
+    // set up all the parameters
+    // seed initial daisies
     public static void setup(
             String scenario,
             int startPercentageOfWhites,
@@ -115,8 +118,6 @@ public class DaisyWorld {
         checkAlbedo(albedoOfWhites);
         checkAlbedo(albedoOfSurface);
 
-
-
         ticker = new Ticker();
         whitesPopulation = 0;
         blacksPopulation = 0;
@@ -161,10 +162,12 @@ public class DaisyWorld {
 
         calcTemperature(true);
 
+        // write initial data
         writeData();
     }
 
     // only used for weather experiment
+    // apply different weathers
     private static void applyWeather() {
         solarLuminosity = 1;
         // set initial weather
@@ -210,18 +213,21 @@ public class DaisyWorld {
         }
     }
 
+    // check albedo parameters
     private static void checkAlbedo(double albedo) throws InvalidParameterException {
         if(albedo < 0 || albedo > 1){
             throw new InvalidParameterException("Invalid albedo parameter");
         }
     }
 
+    // check start percentage of daisies parameters
     private static void checkStartPercentage(double startPercentage) throws InvalidParameterException {
         if(startPercentage < 0 || startPercentage > 50){
             throw new InvalidParameterException("Invalid startPercentage parameter");
         }
     }
 
+    // calc the temperature
     private static void calcTemperature(boolean isSetupState) {
         // calc all the temperature
         double temperatureTemp = 0;
@@ -259,6 +265,7 @@ public class DaisyWorld {
 
     }
 
+    // seed initial black daisies randomly
     private static void seedBlackRandomly() {
         int blacksToSeed = patchNum * DaisyWorld.startPercentageOfBlacks / 100;
         Random random = new Random();
@@ -275,6 +282,7 @@ public class DaisyWorld {
         }
     }
 
+    // seed initial white daisies randomly
     private static void seedWhiteRandomly() {
         int whitesToSeed = patchNum * DaisyWorld.startPercentageOfWhites / 100;
         Random random = new Random();
@@ -290,10 +298,11 @@ public class DaisyWorld {
         }
     }
 
-
+    // check every daisy's survivability
     private static void checkSurvivability() {
         for (int x = 0; x < Params.WORLD_WIDTH; x++) {
             for (int y = 0; y < Params.WORLD_WIDTH; y++) {
+                // if there's a daisy on this patch
                 if (!patches[x][y].noDaisyOnThisPatch()) {
                     patches[x][y].checkSurvivability(patches);
                 }
@@ -301,7 +310,7 @@ public class DaisyWorld {
         }
     }
 
-    // close the writer
+    // flush and close the writer at the end
     public static void end() {
         try {
             fileWriter.flush();
@@ -312,7 +321,8 @@ public class DaisyWorld {
 
     }
 
-
+    // same as Netlogo model
+    // run the daisy world
     public static void go() {
 
         calcTemperature(false);
