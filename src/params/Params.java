@@ -16,14 +16,30 @@ public class Params {
 
     public final static int DAISY_MAX_AGE = 25;
 
-    public final static String SCENARIO_RAMP_UP_RAMP_DOWN = "ramp up ramp down";
-    public final static String SCENARIO_LOW_SOLAR_LUMINOSITY = "low solar luminosity";
-    public final static String SCENARIO_OUR_SOLAR_LUMINOSITY = "our solar luminosity";
-    public final static String SCENARIO_HIGH_SOLAR_LUMINOSITY = "high solar luminosity";
+    public final static String
+            SCENARIO_RAMP_UP_RAMP_DOWN = "ramp up ramp down";
+    public final static String
+            SCENARIO_LOW_SOLAR_LUMINOSITY = "low solar luminosity";
+    public final static String
+            SCENARIO_OUR_SOLAR_LUMINOSITY = "our solar luminosity";
+    public final static String
+            SCENARIO_HIGH_SOLAR_LUMINOSITY = "high solar luminosity";
 
-    public final static double DIFFUSION = 0.5;
+    // weather experiment
+    // each weather last for 100 ticks
+    // 60% sunny: nothing happen
+    // 20% cloudy: luminosity drops 10%
+    // 15% rainy: luminosity drops 15%
+    // 5% lightning: luminosity drops 15%
+    // && kill a random daisy and its neighbours (once)
+    public final static String
+            SCENARIO_WEATHER_EXPERIMENT = "weather experiment";
 
-    public final static double OPTIMUM_TEMPERATURE = 22.5;
+    public final static double SUNNY_LUMINOSITY_MULTIPLIER = 1.0;
+    public final static double CLOUDY_LUMINOSITY_MULTIPLIER = 0.9;
+    public final static double RAINY_LUMINOSITY_MULTIPLIER = 0.85;
+    public final static double LIGHTNING_LUMINOSITY_MULTIPLIER = 0.85;
+
 
     public final static int WORLD_WIDTH = 29;
     public final static int WORLD_HEIGHT = 29;

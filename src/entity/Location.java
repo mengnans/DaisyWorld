@@ -55,7 +55,7 @@ public class Location {
 
     }
 
-    public ArrayList<Location> allNeighbourLocations() {
+    public ArrayList<Location> getAllNeighbourLocations() {
         ArrayList<Location> neighbourLocations = new ArrayList();
         for (int i = 0; i < locationAdjustList.length; i++) {
             Location locationAdjust = locationAdjustList[i];

@@ -46,11 +46,13 @@ public class Daisy {
     public void tick(){ this.age ++; }
 
     public static Daisy getBlackDaisy(int maxAge) {
-        return new Daisy(DaisyWorld.albedoOfBlacks, Params.BLACK_COLOUR, maxAge);
+        return new Daisy(
+                DaisyWorld.albedoOfBlacks, Params.BLACK_COLOUR, maxAge);
     }
 
     public static Daisy getWhiteDaisy(int maxAge) {
-        return new Daisy(DaisyWorld.albedoOfWhites, Params.WHITE_COLOUR, maxAge);
+        return new Daisy(
+                DaisyWorld.albedoOfWhites, Params.WHITE_COLOUR, maxAge);
     }
 
 

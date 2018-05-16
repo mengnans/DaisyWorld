@@ -4,8 +4,9 @@ import entity.Daisy;
 import entity.Location;
 import entity.Patch;
 import entity.Ticker;
+import exception.InvalidParameterException;
 import params.Params;
-import untility.CSVUtils;
+import untility.CSVWriter;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,10 +22,10 @@ import java.util.Random;
 public class DaisyWorld {
     public static double solarLuminosity;
     private static double globalTemperature;
-    public static String scenario;
+    private static String scenario;
 
-    public static int startPercentageOfWhites;
-    public static int startPercentageOfBlacks;
+    private static int startPercentageOfWhites;
+    private static int startPercentageOfBlacks;
 
     public static double albedoOfWhites;
     public static double albedoOfBlacks;
@@ -42,8 +43,17 @@ public class DaisyWorld {
     private final static String FILE_NAME = "./data.csv";
     private static FileWriter fileWriter;
 
-    private static void printInfo() {
-//        System.out.println("" + ticker.getTick() + "[" + whitesPopulation + ", " + blacksPopulation + ", " + globalTemperature + ", " + solarLuminosity + "]");
+    // write data into csv file
+    private static void writeData() {
+
+//        print all data
+//        System.out.println("" + ticker.getTick()
+//                + "[" + whitesPopulation + ", "
+//                + blacksPopulation + ", "
+//                + globalTemperature + ", "
+//                + solarLuminosity + "]");
+
+        // store data in a Array List
         List<String> data = new ArrayList<>();
         data.add("" + ticker.getTick());
         data.add("" + whitesPopulation);
@@ -52,15 +62,22 @@ public class DaisyWorld {
         data.add("" + solarLuminosity);
 
         try {
-            CSVUtils.writeLine(fileWriter,data);
+            // write the data into csv file
+            CSVWriter.writeLine(fileWriter, data);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public static void setup(String scenario, int startPercentageOfWhites, int startPercentageOfBlacks,
-                             double albedoOfWhites, double albedoOfBlacks, double albedoOfSurface) {
+    public static void setup(
+            String scenario,
+            int startPercentageOfWhites,
+            int startPercentageOfBlacks,
+            double albedoOfWhites,
+            double albedoOfBlacks,
+            double albedoOfSurface
+    ) throws InvalidParameterException {
 
         // init the csv writer
         try {
@@ -69,6 +86,21 @@ public class DaisyWorld {
             e.printStackTrace();
         }
 
+        // write the header of csv
+        List<String> data = new ArrayList<>();
+        data.add("tick");
+        data.add("whitesPopulation");
+        data.add("blacksPopulation");
+        data.add("globalTemperature");
+        data.add("solarLuminosity");
+        try {
+            // write the data into csv file
+            CSVWriter.writeLine(fileWriter, data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // init the parameters
         DaisyWorld.scenario = scenario;
         DaisyWorld.startPercentageOfBlacks = startPercentageOfBlacks;
         DaisyWorld.startPercentageOfWhites = startPercentageOfWhites;
@@ -76,40 +108,118 @@ public class DaisyWorld {
         DaisyWorld.albedoOfBlacks = albedoOfBlacks;
         DaisyWorld.albedoOfSurface = albedoOfSurface;
 
-        // TODO: check parameters are valid or not
+        // check parameters are valid or not
+        checkStartPercentage(startPercentageOfBlacks);
+        checkStartPercentage(startPercentageOfWhites);
+        checkAlbedo(albedoOfBlacks);
+        checkAlbedo(albedoOfWhites);
+        checkAlbedo(albedoOfSurface);
+
+
 
         ticker = new Ticker();
         whitesPopulation = 0;
         blacksPopulation = 0;
 
-        // set init luminosity based on different scenarios
-        if (scenario.equals(Params.SCENARIO_OUR_SOLAR_LUMINOSITY)) {
-            solarLuminosity = 1.0;
-        }
-        if (scenario.equals(Params.SCENARIO_RAMP_UP_RAMP_DOWN)) {
-            solarLuminosity = 0.8;
-        }
-        if (scenario.equals(Params.SCENARIO_LOW_SOLAR_LUMINOSITY)) {
-            solarLuminosity = 0.6;
-        }
-        if (scenario.equals(Params.SCENARIO_HIGH_SOLAR_LUMINOSITY)) {
-            solarLuminosity = 1.4;
-        }
-
         patches = new Patch[Params.WORLD_WIDTH][Params.WORLD_HEIGHT];
         for (int x = 0; x < Params.WORLD_WIDTH; x++) {
-            for (int y = 0; y < Params.WORLD_WIDTH; y++) {
+            for (int y = 0; y < Params.WORLD_HEIGHT; y++) {
                 Patch patch = new Patch(new Location(x, y));
                 patches[x][y] = patch;
             }
         }
+
         patchNum = Params.WORLD_WIDTH * Params.WORLD_HEIGHT;
 
+        // randomly seed initial black and white daisies
         seedBlackRandomly();
         seedWhiteRandomly();
+
+
+        // set init luminosity based on different scenarios
+        switch (scenario) {
+            case Params.SCENARIO_OUR_SOLAR_LUMINOSITY:
+                solarLuminosity = 1.0;
+                break;
+            case Params.SCENARIO_RAMP_UP_RAMP_DOWN:
+                solarLuminosity = 0.8;
+                break;
+            case Params.SCENARIO_LOW_SOLAR_LUMINOSITY:
+                solarLuminosity = 0.6;
+                break;
+            case Params.SCENARIO_HIGH_SOLAR_LUMINOSITY:
+                solarLuminosity = 1.4;
+                break;
+            case Params.SCENARIO_WEATHER_EXPERIMENT:
+                applyWeather();
+                break;
+            default:
+                solarLuminosity = 1.0;
+                break;
+        }
+
+
         calcTemperature(true);
 
-        printInfo();
+        writeData();
+    }
+
+    // only used for weather experiment
+    private static void applyWeather() {
+        solarLuminosity = 1;
+        // set initial weather
+        Random random = new Random();
+        int randomNumber = random.nextInt(100) + 1;
+        if (randomNumber <= 60) {
+            // sunny
+            solarLuminosity *= Params.SUNNY_LUMINOSITY_MULTIPLIER;
+        } else if (randomNumber <= 80) {
+            // cloudy
+            solarLuminosity *= Params.CLOUDY_LUMINOSITY_MULTIPLIER;
+        } else if (randomNumber <= 95) {
+            // rainy
+            solarLuminosity *= Params.RAINY_LUMINOSITY_MULTIPLIER;
+        } else {
+            // lightning
+            solarLuminosity *= Params.LIGHTNING_LUMINOSITY_MULTIPLIER;
+            // strike on a random position, and kill any daisy on that
+            // location or near that location
+            int randomX = random.nextInt(Params.WORLD_WIDTH);
+            int randomY = random.nextInt(Params.WORLD_HEIGHT);
+            Patch randomPatch = patches[randomX][randomY];
+
+            // kill anything on that random patch
+            if(!randomPatch.noDaisyOnThisPatch()){
+                randomPatch.die();
+            }
+
+            // kill anything near that patch
+            Location randomPatchLocation =
+                    patches[randomX][randomY].getLocation();
+            ArrayList<Location> allNeighbourLocations =
+                    randomPatchLocation.getAllNeighbourLocations();
+            for (Location neighbourLocation : allNeighbourLocations
+                    ) {
+                int neighbourX = neighbourLocation.getX();
+                int neighbourY = neighbourLocation.getY();
+                Patch neighbourPatch = patches[neighbourX][neighbourY];
+                if(!neighbourPatch.noDaisyOnThisPatch()){
+                    neighbourPatch.die();
+                }
+            }
+        }
+    }
+
+    private static void checkAlbedo(double albedo) throws InvalidParameterException {
+        if(albedo < 0 || albedo > 1){
+            throw new InvalidParameterException("Invalid albedo parameter");
+        }
+    }
+
+    private static void checkStartPercentage(double startPercentage) throws InvalidParameterException {
+        if(startPercentage < 0 || startPercentage > 50){
+            throw new InvalidParameterException("Invalid startPercentage parameter");
+        }
     }
 
     private static void calcTemperature(boolean isSetupState) {
@@ -156,7 +266,9 @@ public class DaisyWorld {
             int x = random.nextInt(Params.WORLD_WIDTH);
             int y = random.nextInt(Params.WORLD_HEIGHT);
             if (patches[x][y].noDaisyOnThisPatch()) {
-                Daisy blackDaisy = Daisy.getBlackDaisy(random.nextInt(Params.DAISY_MAX_AGE));
+                Daisy blackDaisy =
+                        Daisy.getBlackDaisy(
+                                random.nextInt(Params.DAISY_MAX_AGE));
                 patches[x][y].setDaisyOnThisPatch(blackDaisy);
                 blacksPopulation++;
             }
@@ -170,7 +282,8 @@ public class DaisyWorld {
             int x = random.nextInt(Params.WORLD_WIDTH);
             int y = random.nextInt(Params.WORLD_HEIGHT);
             if (patches[x][y].noDaisyOnThisPatch()) {
-                Daisy whiteDaisy = Daisy.getWhiteDaisy(random.nextInt(Params.DAISY_MAX_AGE));
+                Daisy whiteDaisy = Daisy.getWhiteDaisy(
+                        random.nextInt(Params.DAISY_MAX_AGE));
                 patches[x][y].setDaisyOnThisPatch(whiteDaisy);
                 whitesPopulation++;
             }
@@ -178,7 +291,7 @@ public class DaisyWorld {
     }
 
 
-    public static void checkSurviability() {
+    private static void checkSurvivability() {
         for (int x = 0; x < Params.WORLD_WIDTH; x++) {
             for (int y = 0; y < Params.WORLD_WIDTH; y++) {
                 if (!patches[x][y].noDaisyOnThisPatch()) {
@@ -203,26 +316,36 @@ public class DaisyWorld {
     public static void go() {
 
         calcTemperature(false);
-        checkSurviability();
+        checkSurvivability();
         ticker.tick();
-        printInfo();
+        writeData();
 
         // change luminosity based on different scenarios
-        if (scenario.equals(Params.SCENARIO_OUR_SOLAR_LUMINOSITY)) {
-            solarLuminosity = 1.0;
-        }
-        if (scenario.equals(Params.SCENARIO_RAMP_UP_RAMP_DOWN)) {
-            if (ticker.getTick() > 200 && ticker.getTick() <= 400)
-                solarLuminosity += 0.005;
-            if (ticker.getTick() > 600 && ticker.getTick() <= 850) {
-                solarLuminosity -= 0.0025;
-            }
-        }
-        if (scenario.equals(Params.SCENARIO_LOW_SOLAR_LUMINOSITY)) {
-            solarLuminosity = 0.6;
-        }
-        if (scenario.equals(Params.SCENARIO_HIGH_SOLAR_LUMINOSITY)) {
-            solarLuminosity = 1.4;
+        switch (scenario) {
+            case Params.SCENARIO_OUR_SOLAR_LUMINOSITY:
+                solarLuminosity = 1.0;
+                break;
+            case Params.SCENARIO_RAMP_UP_RAMP_DOWN:
+                if (ticker.getTick() > 200 && ticker.getTick() <= 400) {
+                    solarLuminosity += 0.005;
+                } else if (ticker.getTick() > 600 && ticker.getTick() <= 850) {
+                    solarLuminosity -= 0.0025;
+                }
+                break;
+            case Params.SCENARIO_LOW_SOLAR_LUMINOSITY:
+                solarLuminosity = 0.6;
+                break;
+            case Params.SCENARIO_HIGH_SOLAR_LUMINOSITY:
+                solarLuminosity = 1.4;
+                break;
+            case Params.SCENARIO_WEATHER_EXPERIMENT:
+                if(ticker.getTick() % 100 == 0){
+                    applyWeather();
+                }
+                break;
+            default:
+                solarLuminosity = 1.0;
+                break;
         }
 
     }

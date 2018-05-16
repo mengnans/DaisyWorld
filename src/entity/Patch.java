@@ -17,11 +17,10 @@ public class Patch {
     private Daisy daisyOnThisPatch;
     private final static Daisy NO_DAISY_ON_THIS_PATCH = null;
 
-    // TODO changne back
-    public double temperature;
-    public double temperatureLeft;
-    public double diffusionLeft;
-    public double diffusionReceived;
+    private double temperature;
+    private double temperatureLeft;
+    private double diffusionLeft;
+    private double diffusionReceived;
 
 
     public Patch(Location location) {
@@ -85,7 +84,7 @@ public class Patch {
         ArrayList<Location> neighbourLocations =
                 patches[this.location.getX()][this.location.getY()]
                         .getLocation()
-                        .allNeighbourLocations();
+                        .getAllNeighbourLocations();
 
         // calc diffusion for each patch
         double diffusionToEachPatch = diffusionLeft / 8;
@@ -106,6 +105,17 @@ public class Patch {
         temperature = temperatureLeft + diffusionLeft +diffusionReceived;
     }
 
+    public void die() {
+        // die
+        if(Params.
+                BLACK_COLOUR.equals(daisyOnThisPatch.getColour())){
+            DaisyWorld.blacksPopulation --;
+        } else {
+            DaisyWorld.whitesPopulation --;
+        }
+        setDaisyOnThisPatch(NO_DAISY_ON_THIS_PATCH);
+    }
+
     public void checkSurvivability(Patch[][] patches) {
         if(noDaisyOnThisPatch()){
             return;
@@ -116,15 +126,17 @@ public class Patch {
         daisyOnThisPatch.tick();
         if (daisyOnThisPatch.getAge()
                 < daisyOnThisPatch.getMaxAge()) {
-            seedThreshold = ((0.1457 * temperature) - (0.0032 * (Math.pow(temperature,2))) - 0.6443);
+            seedThreshold = ((0.1457 * temperature) -
+                    (0.0032 * (Math.pow(temperature,2))) - 0.6443);
             Random random = new Random();
             if (random.nextFloat() < seedThreshold) {
                 ArrayList<Location> neighbourLocations =
-                        location.allNeighbourLocations();
+                        location.getAllNeighbourLocations();
                 // find random neighbour without daisy on it
                 while (neighbourLocations.size() > 0) {
                     int randomIndex = random.nextInt(neighbourLocations.size());
-                    Location neighbourLocation = neighbourLocations.get(randomIndex);
+                    Location neighbourLocation =
+                            neighbourLocations.get(randomIndex);
                     neighbourLocations.remove(randomIndex);
 
                     int x = neighbourLocation.getX();
@@ -163,15 +175,7 @@ public class Patch {
                 }
             }
         } else {
-            // die
-            if(Params.
-                    BLACK_COLOUR.equals(daisyOnThisPatch.getColour())){
-                DaisyWorld.blacksPopulation --;
-            } else {
-                DaisyWorld.whitesPopulation --;
-            }
-            setDaisyOnThisPatch(NO_DAISY_ON_THIS_PATCH);
-
+            die();
         }
 
     }
