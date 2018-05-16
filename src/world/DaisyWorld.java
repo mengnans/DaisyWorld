@@ -214,16 +214,19 @@ public class DaisyWorld {
     }
 
     // check albedo parameters
-    private static void checkAlbedo(double albedo) throws InvalidParameterException {
+    private static void checkAlbedo(double albedo)
+            throws InvalidParameterException {
         if(albedo < 0 || albedo > 1){
             throw new InvalidParameterException("Invalid albedo parameter");
         }
     }
 
     // check start percentage of daisies parameters
-    private static void checkStartPercentage(double startPercentage) throws InvalidParameterException {
+    private static void checkStartPercentage(double startPercentage)
+            throws InvalidParameterException {
         if(startPercentage < 0 || startPercentage > 50){
-            throw new InvalidParameterException("Invalid startPercentage parameter");
+            throw new InvalidParameterException(
+                    "Invalid startPercentage parameter");
         }
     }
 
