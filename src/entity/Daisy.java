@@ -4,7 +4,6 @@ import params.Params;
 import world.DaisyWorld;
 
 /**
- * @author Mengnan Shi
  * @create 2018-04-30-15:05
  */
 

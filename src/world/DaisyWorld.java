@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * @author Mengnan Shi
  * @create 2018-05-03-10:45
  */
 

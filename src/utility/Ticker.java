@@ -1,7 +1,6 @@
 package utility;
 
 /**
- * @author Mengnan Shi
  * @create 2018-05-03-11:20
  */
 

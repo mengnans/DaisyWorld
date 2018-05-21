@@ -5,7 +5,6 @@ import java.io.Writer;
 import java.util.List;
 
 /**
- * @author Mengnan Shi
  * @create 2018-05-14-21:29
  */
 

@@ -2,7 +2,6 @@ package params;
 
 
 /**
- * @author Mengnan Shi
  * @create 2018-04-30-15:07
  */
 

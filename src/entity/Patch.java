@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * @author Mengnan Shi
  * @create 2018-05-03-10:57
  */
 

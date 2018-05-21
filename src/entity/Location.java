@@ -5,7 +5,6 @@ import params.Params;
 import java.util.ArrayList;
 
 /**
- * @author Mengnan Shi
  * @create 2018-05-03-10:58
  */
 
